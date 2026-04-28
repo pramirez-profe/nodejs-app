@@ -1,0 +1,29 @@
+{
+  "name": "nodejs-jest-coverage-example",
+  "version": "1.0.0",
+  "description": "Ejemplo de cobertura de código con Jest + Istanbul para clase de DevOps (Duoc UC).",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit",
+    "coverage:open": "open coverage/lcov-report/index.html || xdg-open coverage/lcov-report/index.html"
+  },
+  "keywords": ["jest", "coverage", "istanbul", "devops", "ci"],
+  "author": "Duoc UC - DevOps",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "jest-junit": {
+    "outputDirectory": "./reports",
+    "outputName": "junit.xml",
+    "ancestorSeparator": " › ",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
+  }
+}
