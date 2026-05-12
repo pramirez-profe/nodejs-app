@@ -12,11 +12,9 @@
  */
 module.exports = {
   testEnvironment: 'node',
-
   collectCoverage: true,
-
   collectCoverageFrom: [
-    'src/**/*.js',
+    'src/*.js',
     '!src/index.js',
     '!**/node_modules/**',
   ],
@@ -47,7 +45,7 @@ module.exports = {
     },
   },
 
-  testMatch: ['<rootDir>/tests/**/*.test.js'],
+  testMatch: ['<rootDir>/tests/*.test.js'],
 
   verbose: true,
   clearMocks: true,
