@@ -12,7 +12,7 @@ describe('calculateDiscount', () => {
 
     it('lanza TypeError si amount es NaN', () => {
       expect(() =>
-        calculateDiscount({ amount: NaN, tier: CUSTOMER_TIERS.STANDARD }),
+        calculateDiscount({ amount: Number.NaN, tier: CUSTOMER_TIERS.STANDARD }),
       ).toThrow(TypeError);
     });
 
