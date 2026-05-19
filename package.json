@@ -1,6 +1,6 @@
 {
   "name": "nodejs-jest-coverage-example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ejemplo de cobertura de código con Jest + Istanbul para clase de DevOps (Duoc UC).",
   "main": "src/index.js",
   "scripts": {
