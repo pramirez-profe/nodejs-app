@@ -131,7 +131,9 @@ jobs:
         with:
           username: ec2-user
           command: |
-            docker --version
+            sudo dnf install -y docker
+            sudo systemctl enable --now docker
+            sudo docker --version
           ec2_instance_id: ${{ vars.INSTANCE_ID }}
           region: ${{ vars.AWS_REGION }} 
       - name: Output
