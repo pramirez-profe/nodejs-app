@@ -132,8 +132,8 @@ jobs:
           username: ec2-user
           command: |
             docker --version
-          ec2_instance_id: ${{ env.INSTANCE_ID }}
-          region: ${{ env.AWS_REGION }} 
+          ec2_instance_id: ${{ vars.INSTANCE_ID }}
+          region: ${{ vars.AWS_REGION }} 
       - name: Output
         run: |
           echo -e "Output: ${{ steps.ssh-command.outputs.output }}"
