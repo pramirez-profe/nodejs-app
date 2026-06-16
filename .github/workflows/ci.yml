@@ -124,7 +124,7 @@ jobs:
             commands: |
               pwd
               ls
-              echo "Executed by Github Actions Workflow #${{ github.run_id }}" >> test.txt
+              echo "output=Executed by Github Actions Workflow #${{ github.run_id }}" >> $GITHUB_OUTPUT
       #- name: Run SSH Command
       #  id: ssh-command
       #  uses: leonowski/ec2-ssh-ghactions@v1
@@ -133,6 +133,6 @@ jobs:
       #    command: ${{ inputs.command }}
       #    ec2_instance_id: ${{ inputs.ec2_instance_id }}
       #    region: ${{ inputs.region }}
-      #- name: Output
-      #  run: |
-      #    echo -e "${{ steps.ssh-command.outputs.command_output }}"
+      - name: Output
+        run: |
+          echo -e "Output: ${{ steps.ssh-command.outputs.output }}"
