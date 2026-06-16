@@ -101,12 +101,40 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Autenticarse con GHCR
+        users: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Image Metadata
+        id: meta
+        uses: docker/metadata-actions@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha
+            type=raw,value=latest
+      - name: Build Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
   deploy:
     name: Build y Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -122,8 +150,9 @@ jobs:
       #      instance-ids: |
       #        i-022615135929f84ec
       #      commands: |
-      #        pwd
-      #        ls
+      #        sudo dnf install -y docker
+      #        sudo systemctl enable --now docker
+      #        sudo docker --version
       #        echo "output=Executed by Github Actions Workflow #${{ github.run_id }}" >> $GITHUB_OUTPUT
       - name: Run SSH Command
         id: ssh-command
