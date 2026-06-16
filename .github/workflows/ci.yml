@@ -161,7 +161,7 @@ jobs:
       - name: Enviar compose a instancia
         run: |
           FILE_BASE64=$(base64 -w 0 docker-compose.yml)
-          REMOTE_PATH="./docker-compose.yml"
+          REMOTE_PATH="/home/ssm-user/docker-compose.yml"
           
           aws ssm send-command \
             --instance-ids "${{ vars.INSTANCE_ID }}" \
@@ -172,12 +172,12 @@ jobs:
         id: ssh-command
         uses: leonowski/ec2-ssh-ghactions@v1
         with:
-          username: ec2-user
+          username: ssm-user
           command: |
             sudo dnf install -y docker
             sudo systemctl enable --now docker
             sudo docker --version
-            sudo docker compose up -d 
+            sudo docker compose -f /home/ssm-user/docker-compose.yml up -d 
           ec2_instance_id: ${{ vars.INSTANCE_ID }}
           region: ${{ vars.AWS_REGION }} 
       - name: Output
