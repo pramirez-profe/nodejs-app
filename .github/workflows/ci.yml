@@ -176,7 +176,9 @@ jobs:
           command: |
             sudo dnf install -y docker
             sudo systemctl enable --now docker
-            sudo docker --version
+            sudo mkdir -p /usr/libexec/docker/cli-plugins
+            sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
+            sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
             sudo docker compose -f /home/ssm-user/docker-compose.yml up -d 
           ec2_instance_id: ${{ vars.INSTANCE_ID }}
           region: ${{ vars.AWS_REGION }} 
