@@ -1,5 +1,5 @@
 services:
   node-app:
-    image: docker pull ghcr.io/pramirez-profe/nodejs-app:latest
+    image: ghcr.io/pramirez-profe/nodejs-app:latest
     ports:
       - 3000:3000
