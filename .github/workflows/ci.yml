@@ -114,25 +114,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           #aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-      - name: Execute command
-        id: ssh-command
-        uses: debugger24/action-aws-ssm-run-command@v1
-        with:
-            aws-region: us-east-1
-            instance-ids: |
-              i-022615135929f84ec
-            commands: |
-              pwd
-              ls
-              echo "output=Executed by Github Actions Workflow #${{ github.run_id }}" >> $GITHUB_OUTPUT
-      #- name: Run SSH Command
+      #- name: Execute command
       #  id: ssh-command
-      #  uses: leonowski/ec2-ssh-ghactions@v1
+      #  uses: debugger24/action-aws-ssm-run-command@v1
       #  with:
-      #    username: ${{ inputs.username }}
-      #    command: ${{ inputs.command }}
-      #    ec2_instance_id: ${{ inputs.ec2_instance_id }}
-      #    region: ${{ inputs.region }}
+      #      aws-region: us-east-1
+      #      instance-ids: |
+      #        i-022615135929f84ec
+      #      commands: |
+      #        pwd
+      #        ls
+      #        echo "output=Executed by Github Actions Workflow #${{ github.run_id }}" >> $GITHUB_OUTPUT
+      - name: Run SSH Command
+        id: ssh-command
+        uses: leonowski/ec2-ssh-ghactions@v1
+        with:
+          username: ec2-user
+          command: |
+            docker --version
+          ec2_instance_id: ${{ env.INSTANCE_ID }}
+          region: ${{ env.AWS_REGION }} 
       - name: Output
         run: |
           echo -e "Output: ${{ steps.ssh-command.outputs.output }}"
