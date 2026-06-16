@@ -125,6 +125,7 @@ jobs:
             type=sha
             type=raw,value=latest
       - name: Build Docker
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -132,8 +133,9 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 
   deploy:
-    name: Build y Deploy
+    name: Deploy
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -154,6 +156,16 @@ jobs:
       #        sudo systemctl enable --now docker
       #        sudo docker --version
       #        echo "output=Executed by Github Actions Workflow #${{ github.run_id }}" >> $GITHUB_OUTPUT
+      - name: Enviar compose a instancia
+        run: |
+          FILE_BASE64=$(base64 -w 0 docker-compose.yml)
+          REMOTE_PATH="./docker-compose.yml"
+          
+          aws ssm send-command \
+            --instance-ids "${{ vars.INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Copiando docker-compose al servidor" \
+            --parameters "{\"commands\":[\"echo '$FILE_BASE64' | base64 -d > $REMOTE_PATH\"]}"
       - name: Run SSH Command
         id: ssh-command
         uses: leonowski/ec2-ssh-ghactions@v1
@@ -163,6 +175,7 @@ jobs:
             sudo dnf install -y docker
             sudo systemctl enable --now docker
             sudo docker --version
+            sudo docker compose up -d 
           ec2_instance_id: ${{ vars.INSTANCE_ID }}
           region: ${{ vars.AWS_REGION }} 
       - name: Output
