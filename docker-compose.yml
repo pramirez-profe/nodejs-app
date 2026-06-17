@@ -3,3 +3,9 @@ services:
     image: ghcr.io/pramirez-profe/nodejs-app:latest
     ports:
       - 3000:3000
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: "node-app"
+        awslogs-create-group: "true"
