@@ -1,9 +1,24 @@
 'use strict';
 
 const express = require('express');
+const pinoHttp = require('pino-http');
 const { calculateDiscount, validateOrder } = require('./index');
+const logger = require('./logger');
 
 const app = express();
+
+// Registra cada peticion HTTP como una linea JSON en stdout.
+app.use(pinoHttp({
+  logger,
+  // Mensaje y nivel segun el resultado de la respuesta.
+  customLogLevel: (req, res, err) => {
+    if (res.statusCode >= 500 || err) return 'error';
+    if (res.statusCode >= 400) return 'warn';
+    return 'info';
+  },
+  customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
+  customErrorMessage: (req, res, err) => `${req.method} ${req.url} ${res.statusCode} - ${err.message}`
+}));
 
 app.use(express.json());
 

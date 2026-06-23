@@ -16,6 +16,8 @@ module.exports = {
   collectCoverageFrom: [
     'src/*.js',
     '!src/index.js',
+    '!src/server.js',
+    '!src/logger.js',
     '!**/node_modules/**',
   ],
 
