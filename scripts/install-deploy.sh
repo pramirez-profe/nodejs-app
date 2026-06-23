@@ -7,4 +7,4 @@ sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-
 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
 # Despliega los contenedores
-sudo docker compose -f /home/ssm-user/docker-compose.yml up -d 
+sudo docker compose -f /home/ssm-user/docker-compose.yml up -d --pull always --force-recreate
