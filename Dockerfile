@@ -1,9 +1,8 @@
 FROM node:22 AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --omit=dev
 COPY . . 
-RUN npm prune --production
 
 FROM node:22-slim
 WORKDIR /app
