@@ -34,17 +34,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-      - name: Run Snyk monitor to take and send snapshot
-        uses: snyk/actions/node@master
-        with:
-          command: monitor
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Install dependencies (instalación reproducible)
         run: npm ci
 
@@ -76,6 +65,26 @@ jobs:
           summary-title: Resumen
           badge-title: Cobertura
           junitxml-path: ./reports/junit.xml
+
+  snyk:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+      - name: Run Snyk monitor to take and send snapshot
+        uses: snyk/actions/node@master
+        with:
+          command: monitor
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   sonarcloud:
     name: SonarCloud Scan
