@@ -1,0 +1,86 @@
+# Versión 2 de la app + su Service + HTTPRoute con reparto 80/20.
+# v2 usa el label app: node-app-v2 para que el Service original "node-app" siga seleccionando solo v1.
+# Reemplaza el HTTPRoute "node-app" de ../httproute.yaml (mismo nombre).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app-v2
+  namespace: nodejs-app
+  labels:
+    app: node-app-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app-v2
+  template:
+    metadata:
+      labels:
+        app: node-app-v2
+        version: v2
+    spec:
+      serviceAccountName: node-app
+      containers:
+        - name: node-app
+          image: ghcr.io/pramirez-profe/nodejs-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: VERSION
+              value: v2
+            - name: DB_HOST
+              value: mysql
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: node
+            - name: DB_PASSWORD
+              value: node
+            - name: DB_NAME
+              value: nodejs-app
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-app-v2
+  namespace: nodejs-app
+spec:
+  selector:
+    app: node-app-v2
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: node-app
+  namespace: nodejs-app
+spec:
+  parentRefs:
+    - name: bookinfo-gateway
+      namespace: default
+      sectionName: http
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: node-app   # Service original: solo selecciona los pods v1
+          port: 3000
+          weight: 80
+        - name: node-app-v2
+          port: 3000
+          weight: 20
