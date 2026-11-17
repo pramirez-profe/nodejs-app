@@ -1,0 +1,20 @@
+# Solo la ServiceAccount "node-app" puede conectarse a MySQL (L4, lo aplica ztunnel; no requiere waypoint).
+# Asume el trust domain por defecto "cluster.local".
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: mysql-solo-node-app
+  namespace: nodejs-app
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/nodejs-app/sa/node-app
+      to:
+        - operation:
+            ports: ["3306"]

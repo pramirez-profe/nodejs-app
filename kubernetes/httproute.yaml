@@ -1,0 +1,21 @@
+# Expone node-app a través de un Gateway existente (con el NLB internet-facing) en otro namespace.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: node-app
+  namespace: nodejs-app
+spec:
+  parentRefs:
+    - name: bookinfo-gateway
+      namespace: default
+      sectionName: http
+  # hostnames:
+  #   - api.midominio.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /alumnos
+      backendRefs:
+        - name: node-app
+          port: 3000

@@ -1,0 +1,70 @@
+# Aplicación Node.js; se conecta a la BD mediante el nombre del Service "mysql"
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-app
+  namespace: nodejs-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+  namespace: nodejs-app
+  labels:
+    app: node-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+        version: v1
+    spec:
+      serviceAccountName: node-app
+      containers:
+        - name: node-app
+          image: ghcr.io/pramirez-profe/nodejs-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: VERSION
+              value: v1
+            - name: DB_HOST
+              value: mysql
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: node
+            - name: DB_PASSWORD
+              value: node
+            - name: DB_NAME
+              value: nodejs-app
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-app
+  namespace: nodejs-app
+  labels:
+    app: node-app
+spec:
+  type: ClusterIP
+  selector:
+    app: node-app
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
