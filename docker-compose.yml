@@ -1,5 +1,6 @@
 services:
   node-app:
-    image: node-app:latest
+    #image: nodejs-app:latest
+    image: ghcr.io/pramirez-profe/nodejs-app:latest
     ports:
       - 3000:3000
