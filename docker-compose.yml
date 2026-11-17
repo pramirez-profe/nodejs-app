@@ -4,6 +4,12 @@ services:
     image: ghcr.io/pramirez-profe/nodejs-app:latest
     ports:
       - 3000:3000
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: node
+      DB_PASSWORD: node
+      DB_NAME: nodejs-app
     depends_on:
       mysql:
         condition: service_healthy
