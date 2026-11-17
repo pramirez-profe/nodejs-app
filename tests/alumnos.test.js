@@ -29,6 +29,12 @@ function request(method, path, body) {
 }
 
 describe('API alumnos', () => {
+  const originalVersion = process.env.VERSION;
+  afterEach(() => {
+    if (originalVersion === undefined) delete process.env.VERSION;
+    else process.env.VERSION = originalVersion;
+  });
+
   test('POST guarda el alumno', async () => {
     const alumno = { id: 1, nombre: 'Ana', created_at: '2026-01-01T00:00:00.000Z' };
     db.addAlumno.mockResolvedValue(alumno);
@@ -56,9 +62,10 @@ describe('API alumnos', () => {
   test('GET devuelve el listado', async () => {
     const rows = [{ id: 2, nombre: 'Luis' }, { id: 1, nombre: 'Ana' }];
     db.listAlumnos.mockResolvedValue(rows);
+    process.env.VERSION = 'v2';
     const res = await request('GET', '/api/alumnos');
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ version: 'dev', alumnos: rows });
+    expect(res.body).toEqual({ version: 'v2', alumnos: rows });
   });
 
   test('GET devuelve 500 si falla la BD', async () => {
