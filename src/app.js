@@ -12,7 +12,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'UP',
     message: 'Application is running and healthy',
-    version: process.env.VERSION || 'dev'
+    version: process.env.VERSION || 'v1'
   });
 });
 
@@ -53,7 +53,7 @@ app.post('/api/alumnos', async (req, res) => {
 app.get('/api/alumnos', async (req, res) => {
   try {
     const alumnos = await db.listAlumnos();
-    res.json({ version: process.env.VERSION || 'dev', alumnos });
+    res.json({ version: process.env.VERSION || 'v1', alumnos });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
