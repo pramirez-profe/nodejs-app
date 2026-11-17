@@ -29,6 +29,11 @@ function request(method, path, body) {
 }
 
 describe('API alumnos', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
   const originalVersion = process.env.VERSION;
   afterEach(() => {
     if (originalVersion === undefined) delete process.env.VERSION;
@@ -53,7 +58,6 @@ describe('API alumnos', () => {
   );
 
   test('POST devuelve 500 si falla la BD', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
     db.addAlumno.mockRejectedValue(new Error('boom'));
     const res = await request('POST', '/api/alumnos', { nombre: 'Ana' });
     expect(res.status).toBe(500);
@@ -69,7 +73,6 @@ describe('API alumnos', () => {
   });
 
   test('GET devuelve 500 si falla la BD', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
     db.listAlumnos.mockRejectedValue(new Error('boom'));
     const res = await request('GET', '/api/alumnos');
     expect(res.status).toBe(500);
